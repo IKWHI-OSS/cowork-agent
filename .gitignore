@@ -1,0 +1,4 @@
+.DS_Store
+.claude/
+# knowledge/ 산출물은 Building-Infra/Pred-FirefromElec로 이관됨 (REPO-MAP §1)
+knowledge/
