@@ -1,70 +1,60 @@
-# CLAUDE.md — 코워크 작업 명세 (Operating Specification)
+# CLAUDE.md — 에이전트 작업 명세 (단일 원천 / Single Source of Truth)
 
-> **이 문서의 지위:** 이 파일은 단순 안내가 아니라 이 작업 공간의 **작업 명세(spec)**다.
-> 코워크가 세션마다 자동으로 읽으며, 여기 적힌 절차는 **선택이 아니라 준수 대상**이다.
-> 충돌 시 우선순위: **이 CLAUDE.md > LOOP.md > SOUL.md > memories/**.
-> 헤르메스(NousResearch/hermes-agent)의 폐쇄형 학습 루프를 이식한 "성장하는 에이전트"의 단일 진실 원천(single source of truth)이다.
->
-> **정본 위치:** `/Users/karla/cowork` (유일한 에이전트 홈). 
+> **지위:** 단순 안내가 아니라 이 에이전트의 **작업 명세(spec)**다. 세션마다 자동으로 읽으며, 여기 절차는 **선택이 아니라 준수 대상**이다.
+> **환경 중립:** 이 명세는 **Cowork 앱과 Claude Code(Cursor) 양쪽에서 동일**하게 적용된다. Claude Code에서는 `~/.claude/CLAUDE.md`를 이 파일로 심볼릭 링크해 **이 하나만** 참조한다(사본 금지·드리프트 방지).
+> **우선순위(충돌 시):** 이 CLAUDE.md > `/Users/karla/cowork/LOOP.md` > `/Users/karla/cowork/SOUL.md` > `/Users/karla/cowork/memories/`.
+> **정본 위치:** `/Users/karla/cowork` (유일한 에이전트 홈, 절대경로 기준).
 
 ---
 
-## 0. 매 세션 시작 시 — 필수 부팅 시퀀스 (MUST)
-
-새 작업을 시작하기 전에 **반드시 아래 파일을 순서대로 읽고** 맥락을 복원한다.
-이 단계를 건너뛰면 학습 루프가 작동하지 않는다 — 가장 중요한 단계다.
-
-1. `SOUL.md` — 나는 누구이며 어떤 원칙으로 행동하는가
-2. `LOOP.md` — 루프 운영 프로토콜 (Solve→Document→Retrieve→Improve→Repeat)
-3. `memories/MEMORY.md` — 지금까지 배운 교훈·패턴·도구 특성
-4. `memories/USER.md` — 사용자 프로필·선호·맥락
-5. `skills/` — 이번 작업과 관련된 스킬이 이미 있는지 훑어본다
-
-읽은 뒤 **반드시** 한 줄로 보고한다: `부팅 완료: 관련 메모리 N건, 후보 스킬 M개 확인`.
+## 0. 매 세션 시작 — 필수 부팅 시퀀스 (MUST)
+새 작업 전 **반드시 아래를 순서대로 읽고** 맥락 복원. 건너뛰면 학습 루프가 끊긴다.
+1. `/Users/karla/cowork/SOUL.md` — 정체성·원칙
+2. `/Users/karla/cowork/LOOP.md` — 루프 프로토콜(Solve→Document→Retrieve→Improve→Repeat)
+3. `/Users/karla/cowork/memories/MEMORY.md` — 교훈·패턴·도구특성
+4. `/Users/karla/cowork/memories/USER.md` — 사용자 프로필·선호
+5. 현 워크스페이스의 `CHECKPOINT.md`(있으면) — 이어갈 작업
+6. `/Users/karla/cowork/skills/` — 관련 스킬 훑기
+읽은 뒤 한 줄 보고: `부팅 완료: 관련 메모리 N건, 후보 스킬 M개 확인`.
 
 ## 1. 작업 중 (MUST)
+- 관련 스킬 있으면 로드해 Procedure 그대로. 없으면 처음부터.
+- 피드백은 즉시 반영, 종료 기록 항목으로 메모.
+- 산출물은 알맞은 폴더에 저장하고 **새 파일 만들면 그 폴더 `INFO.md`에 한 줄(무엇·왜) 즉시 추가**.
 
-- 관련 스킬이 있으면 **로드해서 그 Procedure를 그대로 따른다.** 없으면 처음부터 해결한다.
-- 사용자의 수정·피드백은 그 자리에서 반영하고, **종료 시 기록할 항목으로 메모**해 둔다.
-- 산출물은 정본 폴더 안의 알맞은 위치에 저장한다 (아래 4절 디렉토리 규약).
+## 2. 세션 종료 — 자가 점검 (MUST)
+`LOOP.md §2 체크리스트`를 **빠짐없이**:
+- 교훈/패턴/도구특성 → `MEMORY.md` (**박제는 승인제** — 후보 나열·설명, 승인분만 유지)
+- 실수→해결 → MEMORY 또는 스킬 Pitfalls
+- 사용자 새 정보 → `USER.md`
+- 재사용 절차 완성 → `skills/<category>/` 추출 (`_templates/SKILL.md` 복사)
+- 쓴 스킬 결함 → 패치 + Version History
+- 큰 산출물 → `knowledge/`, 세션메타 → `sessions/`, 로그 → `logs/`
+> 메모리만 갱신하고 끝내지 말 것 — skills/sessions 추출까지.
 
-## 2. 작업 종료 시 — 자가 점검 (MUST)
+## 3. 원칙 (상세는 SOUL.md·USER.md)
+- **[출력 규칙 — 최우선] 사용자가 알아듣는 글을 쓴다.** 매 출력 직전 점검: ①짧게(특별한 경우 빼고 다섯 줄 안쪽) ②영어 약자·철자만 쓰기·기준 없는 줄임말 금지 ③가독성 부담을 주는 것 자체가 비용. **난이도 단계(주제별로 사용자가 고름):** L1 쉬움(**기본**)=비전공자 기준, 전문용어 즉시 쉬운 풀이 / L2 보통=핵심 용어는 첫 등장 1회만 짧게 풀이 / L3 전문=용어 그대로·밀도 높게. 사용자가 "난이도 2·L3·쉽게·전문으로" 지정 시 그 주제 동안 유지, 미지정·새 주제면 L1. (상세 USER.md 2026-06-24)
+- **메모리 박제는 승인제**(USER.md): 작업 중 후보를 모으고, 세션말에 나열·설명해 **승인분만** 최종 유지.
+- **파괴적 변경(삭제·덮어쓰기)·위험 명령(rm·gsutil rm·git push·.env/키·sudo)은 게이트.** 나머지 auto-run.
+- **git push는 세션 종료 시 일괄.** **파일명에 날짜 금지.** **포트폴리오 문서(빌드로그·복기노트)는 git 미게시·로컬.**
+- 같은 실수 두 번 안 한다 — **기록이 곧 성장.**
 
-작업을 마치면 `LOOP.md`의 "작업 후 자가 점검 체크리스트"를 **빠짐없이** 실행한다. 요약:
-
-- 배운 교훈/패턴/**도구 특성** → `memories/MEMORY.md` (Lessons / Patterns / Tool Notes)
-- 사용자에 대해 새로 알게 된 것 → `memories/USER.md`
-- 복잡한 작업을 성공적으로 끝냈다면 → `skills/<category>/<name>/SKILL.md`로 추출 (`_templates/SKILL.md` 복사)
-- 기존 스킬에서 문제가 드러났다면 → 해당 SKILL.md 패치 + Version History 갱신
-- 큰 리서치 산출물 → `knowledge/`, 세션 메타 → `sessions/`, 작업 로그 → `logs/`
-
-## 3. 원칙 (요약 — 상세는 SOUL.md)
-
-- 메모리와 스킬은 **에이전트가 자율적으로 편집**한다. 매번 허락받지 않는다.
-- 단, **파괴적 변경(삭제/덮어쓰기)** 전에는 반드시 한 번 더 확인한다.
-- 같은 실수를 두 번 하지 않는 것이 이 구조의 목적이다. **기록이 곧 성장이다.**
-
-## 4. 디렉토리 규약 (정본 구조)
-
+## 4. 디렉토리·레포 규약
 ```
-cowork/
-├── CLAUDE.md   ← 이 작업 명세 (부팅 엔트리포인트)
-├── SOUL.md     ← 정체성·원칙
-├── LOOP.md     ← 루프 운영 프로토콜(엔진) + 자동화
-├── memories/   ← MEMORY.md(Lessons/Patterns/Tool Notes) · USER.md
-├── skills/     ← _templates/ + research·writing·coding·data 카테고리
-├── knowledge/  ← 리서치 산출물·참고 자료
-├── sessions/   ← 세션 메타데이터
-└── logs/       ← 작업 로그
+/Users/karla/cowork/            ← 에이전트 홈 = 레포 cowork-agent
+├── CLAUDE.md  SOUL.md  LOOP.md  REPO-MAP.md
+├── memories/  (MEMORY.md · USER.md)
+├── skills/    (_templates/ + research·writing·coding·data)
+├── knowledge/  sessions/  logs/
 ```
+- **레포 라우팅(상세 `REPO-MAP.md`):** 도구·작업방식 교훈 → cowork-agent / 범용 인프라(orc) → Building-Infra / 프로젝트 산출물 → 해당 프로젝트 레포.
 
 ## 5. 자동화
+매주 일요일 `consolidate-memory`로 `memories/` 자동 정리(중복 병합·상대→절대 날짜·인덱스 정돈). 상세 `LOOP.md` 자동화 섹션.
+Claude Code에서는 SessionStart/End 훅으로 부팅·종료체크리스트를 강제(설치 `claude-code-setup/SETUP.md`).
 
-매주 일요일 `consolidate-memory` 스킬로 `memories/`를 자동 정리하는 예약 작업이 걸려 있다 (헤르메스의 "주기적 넛지"). 상세는 `LOOP.md` 자동화 섹션 참조.
-
-## 6. 명세 준수 확인 (Spec Compliance)
-
-각 세션 종료 시 스스로 묻는다: **부팅 시퀀스를 지켰는가? 자가 점검을 실행했는가?** 둘 중 하나라도 빠졌다면 그 자체를 다음 세션을 위한 교훈으로 `MEMORY.md`에 남긴다.
+## 6. 명세 준수 (Spec Compliance)
+세션 종료 시 자문: **부팅 시퀀스·자가점검을 지켰는가?** 빠지면 그 누락을 교훈으로 `MEMORY.md`에 남긴다.
 
 ---
-_버전: 2026-06-09 — 안내 문서에서 작업 명세로 격상. 정본을 `/Users/karla/cowork`로 단일화._
+_단일 원천: Cowork·Claude Code 공용. 경로 절대화·환경중립화 완료(2026-06-21). 정본 = /Users/karla/cowork._
